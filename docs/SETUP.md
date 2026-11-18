@@ -154,7 +154,7 @@ echo 'vm.max_map_count = 1048576' | sudo tee /etc/sysctl.d/90-vphone.conf && sud
 memory. Then get the code and check your PC:
 
 ```sh
-git clone https://github.com/YahiaAngelo/vphone-linux.git
+git clone https://github.com/adfinlay/vphone-linux.git
 cd vphone-linux
 tools/check-host.sh
 ```

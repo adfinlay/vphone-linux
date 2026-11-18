@@ -7,7 +7,7 @@ The details [SETUP.md](SETUP.md) leaves out.
 `./build.sh` runs these steps.
 
 ```sh
-git clone https://github.com/YahiaAngelo/vphone-linux.git
+git clone https://github.com/adfinlay/vphone-linux.git
 cd vphone-linux
 git submodule update --init            # qemu, reims-vgpu, metal2vulkan
 git -C qemu submodule update --init util/mlib

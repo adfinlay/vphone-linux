@@ -130,7 +130,7 @@ You need a Linux x86_64 PC with a Vulkan GPU (NVIDIA is the only vendor tested s
 Run these commands from a terminal:
 
 ```sh
-git clone https://github.com/YahiaAngelo/vphone-linux.git && cd vphone-linux
+git clone https://github.com/adfinlay/vphone-linux.git && cd vphone-linux
 ./setup/setup.sh       # Install dependencies and build the tools (safe to re-run)
 ./setup/create-vm.sh   # Choose a device and iOS version, then create and start the VM
 ```

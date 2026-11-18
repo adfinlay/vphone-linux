@@ -185,10 +185,9 @@ do_phase deps && {
 # --src DIR still points the build at a second checkout.
 do_phase sources && {
   if [ ! -e "$VSETUP_SRC/.git" ]; then
-    log " Cloning vphone-linux ($VPHONE_LINUX_BRANCH) into $VSETUP_SRC"
+    log " Cloning vphone-linux ($VPHONE_LINUX_REPO, $VPHONE_LINUX_BRANCH) into $VSETUP_SRC"
     mkdir -p "$(dirname "$VSETUP_SRC")"
-    git clone --branch "$VPHONE_LINUX_BRANCH" \
-      https://github.com/YahiaAngelo/vphone-linux.git "$VSETUP_SRC"
+    git clone --branch "$VPHONE_LINUX_BRANCH" "$VPHONE_LINUX_REPO" "$VSETUP_SRC"
   fi
   log " Fetching submodules (single level — NOT --recursive)"
   git -C "$VSETUP_SRC" submodule update --init

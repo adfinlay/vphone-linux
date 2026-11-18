@@ -18,7 +18,8 @@ VPHONE_CLI_VERSION=${VPHONE_CLI_VERSION:-2.14.2}
 VPHONE_CLI_PUBLIC=${VPHONE_CLI_PUBLIC:-2.14.2}                 # public guest resources
 VPHONE_CLI_REPO=${VPHONE_CLI_REPO:-https://github.com/Lakr233/vphone-cli.git}
 VPHONE_CLI_REF=${VPHONE_CLI_REF:-$VPHONE_CLI_VERSION}           # source tag, branch or commit
-VPHONE_LINUX_BRANCH=${VPHONE_LINUX_BRANCH:-development}        # the branch the sources clone checks out
+VPHONE_LINUX_REPO=${VPHONE_LINUX_REPO:-https://github.com/adfinlay/vphone-linux.git}  # the sources clone (--src/--workdir)
+VPHONE_LINUX_BRANCH=${VPHONE_LINUX_BRANCH:-main}               # the branch the sources clone checks out
 
 log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33mWARN\033[0m %s\n' "$*" >&2; }
