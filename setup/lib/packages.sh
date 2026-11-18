@@ -12,7 +12,7 @@ FEDORA_PKGS=(git gcc gcc-c++ clang lld binutils make cmake ninja-build meson
   libssh-devel libzstd-devel nettle-devel gnutls-devel gtk3-devel
   sdl2-compat-devel bzip2-devel libX11-devel libXScrnSaver-devel wayland-devel libxkbcommon-devel
   vulkan-loader vulkan-loader-devel vulkan-tools
-  socat gdb perf unzip curl zstd
+  socat gdb perf unzip curl zstd bubblewrap slirp4netns
   usbip fuse-sshfs fuse3 7zip kernel-devel
   libusb1-devel libplist-devel libimobiledevice-glue-devel openssl-devel libcurl-devel
   libimobiledevice-devel libusbmuxd-devel libtatsu-devel libarchive-devel
@@ -30,7 +30,7 @@ DEBIAN_PKGS=(git gcc g++ clang lld binutils make cmake ninja-build meson
   libzstd-dev nettle-dev libgnutls28-dev libgtk-3-dev libsdl2-dev
   libbz2-dev libx11-dev libxss-dev libxkbcommon-dev libwayland-dev wayland-protocols
   libvulkan-dev mesa-vulkan-drivers vulkan-tools
-  socat gdb hwdata
+  socat gdb hwdata bubblewrap slirp4netns
   sshfs fuse3 7zip bc flex bison libelf-dev
   binutils-gold zip gnupg2 libpython3-dev libxml2-dev libncurses-dev libz3-dev libedit-dev libsqlite3-dev
   libusb-1.0-0-dev libplist-dev libimobiledevice-glue-dev libssl-dev libcurl4-openssl-dev
@@ -47,6 +47,6 @@ ARCH_PKGS=(git base-devel gcc clang lld binutils make cmake
   glib2 glib2-devel pixman libslirp libssh zstd nettle gnutls gtk3 sdl2-compat bzip2 zlib
   libx11 libxss libxkbcommon wayland vulkan-icd-loader vulkan-headers vulkan-tools
   libxext libxrandr libxcursor libxi libxfixes libxtst libdecor libdrm flex bison dtc
-  socat gdb perf usbip sshfs fuse3 7zip zip unzip curl gnupg
+  socat gdb perf usbip sshfs fuse3 7zip zip unzip curl gnupg bubblewrap slirp4netns
   libusb libplist libimobiledevice-glue libimobiledevice libusbmuxd libtatsu
   libarchive openssl libxml2-legacy libedit sqlite)

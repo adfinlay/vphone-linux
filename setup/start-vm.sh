@@ -16,7 +16,9 @@ set -Eeuo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 
 T=$VSETUP_SRC/tools
-QEMU_RUN=$VSETUP_SRC/run-vphone.sh
+# The VM runs in tools/vphone-sandbox.sh's bubblewrap sandbox; VPHONE_SANDBOX=0 runs it directly.
+QEMU_RUN=$VSETUP_SRC/tools/vphone-sandbox.sh
+[ "${VPHONE_SANDBOX:-1}" = 1 ] || QEMU_RUN=$VSETUP_SRC/run-vphone.sh
 NAME='' CID_OPT='' WINDOW_OPT=1 UNLOCK=1 MODE=start PROFILE=''
 ARGS=("$@")
 while [ $# -gt 0 ]; do

@@ -153,7 +153,9 @@ if [ ! -x "$VC" ] && [ -x "$cli_products/Debug-linux-$cli_arch/vphone-cli" ]; th
   VC=$cli_products/Debug-linux-$cli_arch/vphone-cli
   warn "Release vphone-cli is not built. This invocation is using the existing Debug product: $VC"
 fi
-QEMU_RUN=$VSETUP_SRC/run-vphone.sh
+# The first boot runs in tools/vphone-sandbox.sh's bubblewrap sandbox; VPHONE_SANDBOX=0 runs it directly.
+QEMU_RUN=$VSETUP_SRC/tools/vphone-sandbox.sh
+[ "${VPHONE_SANDBOX:-1}" = 1 ] || QEMU_RUN=$VSETUP_SRC/run-vphone.sh
 T=$VSETUP_SRC/tools
 ECID=$(cat "$VM/ecid" 2>/dev/null || true)
 CACHE=$VSETUP_CACHE
@@ -514,14 +516,20 @@ vphoned_up() {
   CID=$CID VPHONED_TIMEOUT=120 timeout "${1:-150}" "$T/vphoned.sh" GET /v1/health 2>/dev/null | grep -q '"status":"ok"'
 }
 # The VM this script started, by the pid it recorded: still this VM's QEMU (it has this VM's
-# Disk.img open) after a re-run. One known pid is checked; no process is searched for.
+# Disk.img open) after a re-run. One known pid is checked; no process is searched for. Under
+# tools/vphone-sandbox.sh that pid is the sandbox script's, which stays while this VM runs.
 QEMU_PIDFILE=$VM/.qemu.pid
 running_vm() {
-  local pid
+  local pid argv
   pid=$(cat "$QEMU_PIDFILE" 2>/dev/null) || return 1
-  [ -n "$pid" ] && [ -r "/proc/$pid/cmdline" ] &&
-    tr '\0' '\n' < "/proc/$pid/cmdline" | grep -q "file=$VM/Disk.img" &&
+  [ -n "$pid" ] && [ -r "/proc/$pid/cmdline" ] || return 1
+  argv=$(tr '\0' '\n' < "/proc/$pid/cmdline") || return 1
+  if grep -qF "file=$VM/Disk.img" <<< "$argv" ||
+     { grep -qx '.*/vphone-sandbox\.sh' <<< "$argv" && grep -qxF "$VM" <<< "$argv"; }; then
     QEMU_PID=$pid
+  else
+    return 1
+  fi
 }
 boot_vm() {
   local deadline=$((SECONDS + VPHONE_FIRST_BOOT_TIMEOUT)) remaining
