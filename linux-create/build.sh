@@ -15,6 +15,7 @@ source "$here/../setup/lib/common.sh"
 source "$here/../setup/lib/swift.sh"
 
 [ "$(id -u)" != 0 ] || die "run this as your user, not root (the build tree would become root-owned)"
+force_git_symlinks   # the vphone-cli fetch and SwiftPM's clones get real symlinks
 
 src=${VPHONE_CLI:-$here/../cpu-tree/vphone-cli-$VPHONE_CLI_VERSION}
 ensure_vphone_cli_source "$src"

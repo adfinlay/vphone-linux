@@ -89,6 +89,7 @@ die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 log() { printf '%s\n' "$*"; }
 distro_family() { printf 'debian'; }
 ensure_vphone_cli_source() { :; }
+force_git_symlinks() { :; }
 SCRIPT
 cat >"$build_root/setup/lib/swift.sh" <<'SCRIPT'
 VPHONE_SWIFT_VERSION=6.4.1

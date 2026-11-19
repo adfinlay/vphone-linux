@@ -144,3 +144,40 @@ is_wsl() { [ -n "${WSL_DISTRO_NAME:-}" ] || grep -qi microsoft /proc/sys/kernel/
 require_root() {
   [ "$(id -u)" = 0 ] || die "this step needs root (built-in steps tell you when)"
 }
+
+# Git writes each symlink as a small text file when core.symlinks is false, a setting some users
+# keep in ~/.gitconfig (for example for checkouts on Windows drives). QEMU's sources hold
+# symlinks, and its build then fails ("subprojects/libvduse/include/atomic.h: expected
+# identifier"). force_git_symlinks makes the git commands of this script and its children
+# (SwiftPM's clones too) create real symlinks, through git's environment configuration
+# (GIT_CONFIG_COUNT): the user's own git config does not change.
+VSETUP_GIT_SYMLINKS_FORCED=0
+force_git_symlinks() {
+  have git || return 0
+  [ "$(git -C / config --type=bool --get core.symlinks 2>/dev/null || true)" = false ] || return 0
+  local n=${GIT_CONFIG_COUNT:-0}
+  warn "your git config sets core.symlinks=false: this setup's git commands create symlinks anyway"
+  export "GIT_CONFIG_KEY_$n=core.symlinks" "GIT_CONFIG_VALUE_$n=true"
+  export GIT_CONFIG_COUNT=$((n + 1))
+  VSETUP_GIT_SYMLINKS_FORCED=1
+}
+
+# repair_symlinks DIR: in the git checkout DIR, turn the symlinks that a checkout made with
+# core.symlinks=false left as text files back into symlinks, and keep symlinks on in DIR's own
+# config. Only a file whose text is exactly the link's target is replaced.
+repair_symlinks() {
+  local dir=$1 entry meta oid path fixed=()
+  [ -e "$dir/.git" ] || return 0
+  git -C "$dir" config core.symlinks true
+  while IFS= read -r -d '' entry; do
+    meta=${entry%%$'\t'*} path=${entry#*$'\t'}
+    oid=${meta#* } oid=${oid%% *}
+    if [ ! -f "$dir/$path" ] || [ -L "$dir/$path" ]; then continue; fi
+    if [ "$(cat -- "$dir/$path")" != "$(git -C "$dir" cat-file blob "$oid")" ]; then continue; fi
+    rm -f -- "$dir/$path"
+    fixed+=("$path")
+  done < <(git -C "$dir" ls-files -s -z | grep -z '^120000 ' || true)
+  [ "${#fixed[@]}" -gt 0 ] || return 0
+  git -C "$dir" checkout -- "${fixed[@]}"
+  log " Restored ${#fixed[@]} symlink(s) that git had written as text files in $dir"
+}

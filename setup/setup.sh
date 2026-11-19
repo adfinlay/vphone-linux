@@ -21,6 +21,7 @@ source "$VSETUP_ROOT/lib/packages.sh"
 
 VSETUP_ASSUME_YES=${VSETUP_ASSUME_YES:-0}
 VSETUP_PHASE=all
+force_git_symlinks   # every clone below gets real symlinks, whatever core.symlinks says
 while [ $# -gt 0 ]; do
   case $1 in
     -y|--yes)        VSETUP_ASSUME_YES=1 ;;
@@ -251,6 +252,14 @@ build_apfs() {
 # (needs sudo), so `./setup.sh build` alone is enough after pulling this fix.
 if do_phase build && [ "$(distro_family)" = arch ] && lzfse_has_lto; then
   arch_install_lzfse
+fi
+# Checkouts made while core.symlinks was false (an earlier run, or plain git) can hold symlinks
+# as text files: put them back before building.
+if do_phase build && [ "$VSETUP_GIT_SYMLINKS_FORCED" = 1 ]; then
+  for repo in "$VSETUP_SRC" "$VSETUP_SRC/qemu" "$VSETUP_SRC/qemu/util/mlib" \
+              "$VSETUP_SRC/reims-vgpu" "$VSETUP_SRC/metal2vulkan"; do
+    repair_symlinks "$repo"
+  done
 fi
 do_phase build && for step in reims qemu creator usbmuxd apfs; do
   # The C/Rust builds use the system clang/lld, never the Swift toolchain's copies.
