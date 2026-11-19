@@ -69,8 +69,9 @@ case $NET in
 esac
 read -ra ports <<< "${FORWARD//,/ }"
 for p in "${ports[@]}"; do
-  [[ $p =~ ^[0-9]{1,5}$ ]] && [ "$p" -ge 1 ] && [ "$p" -le 65535 ] ||
+  if ! [[ $p =~ ^[0-9]{1,5}$ ]] || [ "$p" -lt 1 ] || [ "$p" -gt 65535 ]; then
     die "VPHONE_SANDBOX_FORWARD: '$p' is not a port number"
+  fi
 done
 if [ "${#ports[@]}" -gt 0 ]; then
   command -v socat >/dev/null || die "VPHONE_SANDBOX_FORWARD needs socat (install it), or set VPHONE_SANDBOX_FORWARD="
@@ -81,6 +82,7 @@ mkdir -p "$STATE"
 # Private files for this run: the forward sockets and the sandbox's resolv.conf.
 RUN=$(mktemp -d "${XDG_RUNTIME_DIR:-/tmp}/vphone-sandbox.XXXXXX")
 helpers=()
+# shellcheck disable=SC2317  # called by the EXIT trap
 cleanup() {
   if [ "${#helpers[@]}" -gt 0 ]; then kill "${helpers[@]}" 2>/dev/null || true; fi
   rm -rf -- "$RUN"
@@ -193,6 +195,7 @@ fi
 
 # SIGINT/SIGTERM/SIGHUP: stop QEMU (bwrap's pid 1 in the sandbox runs it) with SIGTERM, as a
 # Ctrl+C on run-vphone.sh does, then wait for the sandbox to end.
+# shellcheck disable=SC2317  # called by the INT/TERM/HUP trap
 stop_sandbox() {
   local init
   if init=$(pgrep -P "$sandbox" | head -1) && [ -n "$init" ]; then
