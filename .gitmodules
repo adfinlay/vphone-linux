@@ -11,5 +11,5 @@
 	branch = vphone-next4
 [submodule "metal2vulkan"]
 	path = metal2vulkan
-	url = https://github.com/YahiaAngelo/metal2vulkan.git
-	branch = vphone-next4
+	url = https://github.com/adfinlay/metal2vulkan.git
+	branch = fix/nvidia-shadow-quantize-hang
