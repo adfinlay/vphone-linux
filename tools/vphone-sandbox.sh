@@ -37,8 +37,10 @@
 # sandbox's file system is not visible from the host.
 #
 # This script stays as the sandbox's parent: it ends the helpers (slirp4netns, socat) when the
-# VM ends, and passes SIGINT/SIGTERM/SIGHUP on to QEMU as SIGTERM. If it is killed (SIGKILL),
-# the helpers end with it but the VM keeps running, without network: a killed QEMU can leave
+# VM ends, and passes SIGINT/SIGTERM/SIGHUP on to QEMU as SIGTERM. When the command ends, every
+# process still in the sandbox ends too (bwrap --die-with-parent): a GTK window's D-Bus
+# autolaunch, for example, starts daemons that would otherwise keep the sandbox alive. If this
+# script is killed (SIGKILL), the sandbox is killed with it, QEMU too: a killed QEMU can leave
 # the guest's disk damaged. Shut the guest down (start-vm.sh --stop) or close its window.
 #
 # Needs bubblewrap; with forwards socat; with VPHONE_SANDBOX_NET=internet also slirp4netns and
@@ -93,7 +95,7 @@ args=(--unshare-all)
 # internet: keep the namespace made below for slirp4netns (bwrap cannot share its own with it).
 [ "$NET" = none ] || args+=(--share-net)
 args+=(
-  --new-session --clearenv
+  --new-session --die-with-parent --clearenv
   --ro-bind /usr /usr --ro-bind /etc /etc
   --symlink usr/bin /bin --symlink usr/sbin /sbin
   --symlink usr/lib /lib --symlink usr/lib64 /lib64
