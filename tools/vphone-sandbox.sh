@@ -149,7 +149,7 @@ fi
 # run-vphone.sh's own settings; nothing else from the caller's environment.
 while IFS= read -r name; do
   case $name in
-    GFX|WINDOW|TOOLBAR|CID|MEM|SMP|GFX_PPI|DFLAGS|TRACE|QEMU|QEMU_*|VPHONE_*|REIMS_VGPU_*|M2V_*|LP_*|VK_*)
+    GFX|WINDOW|TOOLBAR|CID|MEM|SMP|GFX_PPI|DFLAGS|TRACE|QEMU|QEMU_*|VPHONE_*|REIMS_VGPU_*|M2V_*|METAL2VULKAN_*|LP_*|VK_*)
       args+=(--setenv "$name" "${!name}") ;;
   esac
 done < <(compgen -e)
